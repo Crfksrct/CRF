@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>CRF Instrument Booking</title>
+  <!--Full Calendar CSS-->
+  <link rel="stylesheet" type="text/css" href="/static/css/fullcalendar.min.css">
+  <!-- Bootstrap CSS CDN -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+
+  <!-- Font Awesome CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <!--Local CSS-->
+  <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+  <!--JQuery-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <!-- Popper.JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous">
+  </script>
+  <!-- Bootstrap JS -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous">
+  </script>
+</head>
+
+<body>
+  <!-- Page header -->
+  <header class="header-logo p-4 d-sm-none d-xs-none d-md-block">
+    <div class="container-fluid ">
+      <h1 class="text-center">Central Research Facilities</h1>
+    </div>
+  </header>
+  <nav class="navbar navbar-expand-md navbar-dark sticky-top cens-blue-bg py-0">
+    <a class="navbar-brand d-none d-sm-block d-md-none" href="#"> <span class="small">Central Research
+        Facilities</span></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse main-menu-ul" id="collapsibleNavbar">
+      <ul class="navbar-nav mx-auto ">
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-white" href="/">Introduction</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-white" href="/mission/">Mission</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-white" href="/facilities/">Facilities</a>
+        </li>
+        <!-- Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-uppercase guidelines-navbardropdown text-white" href="/guidelines/" id="guidelines-navbardrop" data-toggle="dropdown"> Guidelines
+          </a>
+          <ul class="dropdown-menu guidelines-navbar-dropdown-menu">
+            <li class="list-dd"><a class="dropdown-item" href="/guidelines">How to use facility</a></li>
+            <li class="list-dd"><a class="dropdown-item" href="/guidelines#payment">Payment</a></li>
+            <li class="list-dd"><a class="dropdown-item" href="/guidelines#cancellation">Cancellation Policy</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-white" href="/events/">Events</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase text-white" href="/contact/">Contact</a>
+        </li>
+
+        
+        <li class="nav-item">
+          <a class="nav-link text-white" href="/accounts/login/">
+            LOGIN
+          </a>
+        </li>
+        
+
+      </ul>
+    </div>
+  </nav>
+
+<!--Home page content-->
+
+
+<div class="body-content-block">
+  
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+<script src=" https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.7.1/fullcalendar.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/css/fullcalendar.min.css">
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    // page is now ready, initialize the calendar...
+    $('#calendar').fullCalendar({
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay'
+      },
+      locale: 'es',
+      events: '/schedule/api/occurrences?calendar_slug=&timezone=Asia/Kolkata',
+      weekends: true,
+      eventLimit: true,
+      dayClick: function (date, jsEvent, view) {
+        $('#id_day').val(date);
+        if (view.name == 'month' || view.name == 'basicWeek') {
+          $('#calendar').fullCalendar('changeView', 'agendaDay');
+          $('#calendar').fullCalendar('gotoDate', date);
+        }
+      },
+      eventClick: function (event, jsEvent, view) {
+        jQuery.noConflict();
+        $('#modalTitle').html(event.title);
+        $('#modalTitle').append('-' + event.creator);
+        $('#modalBody').html(event.start.format("LLL"));
+        $('#modalBody').append('-', event.end.format("LLL"));
+        $('#fullCalModal').modal();
+      }
+    })
+  });
+</script>
+<script>
+  function searchtInstruments() {
+    var input, filter, ul, li, a, i, txtValue;
+    input = document.getElementById("searchBox");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("instrumentList");
+    li = ul.getElementsByTagName("li");
+    for (i = 0; i < li.length; i++) {
+      a = li[i].getElementsByTagName("a")[0];
+      txtValue = a.textContent || a.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        li[i].style.display = "";
+      } else {
+        li[i].style.display = "none";
+      }
+    }
+  }
+  function clearSearchBox() {
+    document.getElementById("searchBox").value = "";
+    searchtInstruments();
+    document.getElementById("searchBox").focus();
+  }
+</script>
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="background-color: unset; margin-bottom: unset; padding-left:unset;">
+            <li class="breadcrumb-item"><a href="file:///C:/Users/God/Desktop/CRF.html"><i class="fa fa-home" aria-hidden="true"></i></a></li>
+            <li class="breadcrumb-item active" aria-current="page">Facilities</li>
+        </ol>
+    </nav>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="input-group">
+                <input type="text" class="form-control fa" id="searchBox" onkeyup="searchtInstruments()" placeholder="Search Instruments" style="width:70%" title="Type instrument full name">
+                <input type="button" onclick="clearSearchBox()" class="btn btn-danger" id="clear-btn" value="clear">
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div style="background:rgb(248, 106, 4);">
+                <h5 class="text-center p-2" style="color: #fff; ">Bio Technology</h5>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3" style=" background-color: #d3d3d354;padding: unset;">
+            <div class=" scroll-bar instrument-sidebar" id="sidebar ">
+                <ul class="nav flex-column " id="instrumentList">
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        <a class="nav-link instrument-name" href="file:///C:/Users/God/Desktop/cse.html">Computer Science and Engineering
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        <a class="nav-link instrument-name" href="file:///C:/Users/God/Desktop/civil.html">Civil Engineering
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        <a class="nav-link instrument-name" href="file:///C:/Users/God/Desktop/EEE.html">Electrical and Electronics Engineering
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        <a class="nav-link instrument-name" href="file:///C:/Users/God/Desktop/ECE.html">Electronics and Communication Engineering
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        <a class="nav-link instrument-name" href="file:///C:/Users/God/Desktop/Mech.html">Mechanical Engineering
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        <a class="nav-link instrument-name" href="file:///C:/Users/God/Desktop/MCT.html">Mechatronics Engineering
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        <a class="nav-link instrument-name" href="file:///C:/Users/God/Desktop/BT.html">Bio Technology
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        <a class="nav-link instrument-name" href="file:///C:/Users/God/Desktop/FT.html">Food Technology
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        <a class="nav-link instrument-name" href="file:///C:/Users/God/Desktop/IT.html">Information Technology
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        <a class="nav-link instrument-name" href="file:///C:/Users/God/Desktop/NST.html">Nano Science and Technology
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        <a class="nav-link instrument-name" href="file:///C:/Users/God/Desktop/Textile.html">Textile Technology
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        
+                    </li>
+                    
+                    <li class="nav-item" style="border-bottom: 1px solid #d3d3d3;">
+                        
+                    </li>
+                    
+                    
+                    
+                         
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-9">
+
+            <div class="row">
+                <div class="col-md-5">
+                    
+                    <img src="CRF7.jpg" alt="3D Powder Mixer" style="width:350px">
+                    
+                </div>
+                <div class="col-md-7">
+                    <div id="detail_table">
+                        <table class="table small table-bordered table-condensed table-sm">
+                            <tbody><tr>
+                                <td>Make:</td>
+                                <td>Alphie</td>
+                            </tr>
+                            <tr>
+                                <td>Model:</td>
+                                <td>Alphie-3</td>
+                            </tr>
+                            <tr>
+                                <td>Year of purchase:</td>
+                                <td>2018</td>
+                            </tr>
+                            <tr>
+                                <td>Funded by:</td>
+                                <td>TSAMRC</td>
+                            </tr><tr>
+                                <td>Location:</td>
+                                <td>Arkavathi</td>
+                            </tr>
+                            <tr>
+                                <td>Contact email:</td>
+                                <td>tsamrclab@cens.res.in</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="text-center">
+                                    
+                                    <a href="/facilities/TS-3DMixer/book" class="btn btn-primary cens-green-bg btn-sm my-2">
+                                        Book New Request
+                                    </a>
+                                    
+                                    
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <ul class="nav nav-pills small">
+                <li class="nav-item">
+                    <a class="nav-link active" id="tech-tab" data-toggle="tab" role="tab" aria-controls="home" href="#tech">Technical
+                        Specification</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="capability-tab" data-toggle="tab" role="tab" aria-controls="" href="#capabilities">Instrument capabilities</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="modes-tab" data-toggle="tab" href="#modes" role="tab" aria-controls="">Modes
+                        of Operation and Duration</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="fees-tab" data-toggle="tab" href="#fees" role="tab" aria-controls="">Characterization
+                        Fee</a>
+                </li>
+            </ul>
+            <div class="tab-content" style="height: 300px; overflow-y: scroll;">
+                <div id="tech" class="tab-pane  in active" role="tabpanel" aria-labelledby="tech-tab">
+                    <ul class="list-group small">
+                        
+                        <li class="list-group-item"> Container Capacity: 3 ltrs</li>
+                        
+                        <li class="list-group-item"> Operating Speed: 10-80 RPM</li>
+                        
+                    </ul>
+                </div>
+                <div id="capabilities" class="tab-pane" role="tabpanel" aria-labelledby="capability-tab">
+                    <ul class="list-group small">
+                        
+                        <li class="list-group-item"> Used for Homogeneous mixing of powders</li>
+                        
+                        <li class="list-group-item"> Machine runs in outward/inward directions</li>
+                        
+                    </ul>
+                </div>
+                <div id="modes" class="tab-pane" role="tabpanel" aria-labelledby="modes-tab">
+                    <table class="table table-bordered table-condensed table-sm small table-striped">
+                        <tbody><tr>
+                            <th>Modes</th>
+                            <th>Duration (hrs)</th>
+                        </tr>
+                        
+                        <tr>
+                            <td>3D Mixer</td>
+                            <td>2hrs</td>
+                        </tr>
+                        
+                    </tbody></table>
+                </div>
+                <div id="fees" class="tab-pane" role="tabpanel" aria-labelledby="modes-tab">
+                    <div id="char-fee_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer"><div class="row"><div class="col-sm-12 col-md-6"></div><div class="col-sm-12 col-md-6"><div id="char-fee_filter" class="dataTables_filter" style="display: none;"><label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="char-fee"></label></div></div></div><div class="row"><div class="col-sm-12"><table class="table table-bordered table-condensed table-sm small table-striped dataTable no-footer" id="char-fee" role="grid">
+                        <thead>
+                        <tr role="row"><th width="200px" class="sorting_asc" tabindex="0" aria-controls="char-fee" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Sl. No. - Category: activate to sort column descending" style="width: 200px;">Sl. No. - Category</th><th class="sorting" tabindex="0" aria-controls="char-fee" rowspan="1" colspan="1" aria-label="Fees ( in Rs/- ) + additional 18% GST: activate to sort column ascending" style="width: 0px;">Fees ( in Rs/- ) + additional 18% GST</th></tr>
+                        </thead>
+                        <tbody>
+                        
+                        <tr class=""><td valign="top" colspan="2" class="dataTables_empty">No data available in table</td></tr></tbody>
+                    </table></div></div><div class="row"><div class="col-sm-12 col-md-5"></div><div class="col-sm-12 col-md-7"></div></div></div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<!-- Include datatable cdn and user defined Javascript for table -->
+<style>
+  .bg-secondary.text-white>th {
+    font-weight: lighter;
+  }
+  #slot-booking-tbl_filter,#slot-booking-tbl_length{
+    float: right;
+    padding-top: 5px;
+  }
+</style>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.6.4/css/buttons.dataTables.min.css">
+<script type="text.javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+<!--Export files cdns-->
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.print.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.colVis.min.js"></script> 
+<!-- needed to use moment.js for our date sorting-->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.20/sorting/datetime-moment.js"></script>
+
+<script>
+  $.fn.dataTable.moment('HH:mm, MMM D, YYYY');
+  $(document).ready(function () {
+    var table = $('#slot-booking-tbl').DataTable({
+      "aLengthMenu": [[25, 50, 75, -1], [25, 50, 75, "All"]],
+      "iDisplayLength": 50,
+      dom: 'lBfrtip',
+        buttons: [
+            'excelHtml5',
+            'pdfHtml5'
+        ]
+    });
+	 table.buttons().container()
+        .appendTo( '#slot-booking-tbl .col-md-6:eq(0) .float-left .pt-2' );
+    
+  });
+
+</script>
+
+<script>
+    $(document).ready(function () {
+      $('#char-fee').DataTable({
+        "paging":   false,
+        "ordering": true,
+        "info":     false
+        });
+        $('#char-fee_filter').css('display','none');
+    });
+</script>
+
+</div>
+
+<footer id="colophon" class="site-footer site-footer-primary mt-4">
+  <div class="top-footer p-2" style="background-color:#d3d3d3;">
+    <div class="container">
+      <div class="footer-widget-wrap">
+        <div class="row">
+          <div class="col-lg-4 col-md-6 col-12 footer-widget-item ">
+            <div id="custom_html-3" class="widget_text widget widget_custom_html">
+              <div class="widget_text footer-item">
+                <h6 class="widget-title text-secondary">ADDRESS</h6>
+                  <div class="textwidget custom-html-widget">
+                    <p class="text-justify small">
+                      K.S.Rangasamy College of Technology<br>KSR Kalvi nagar,<br>Tiruchengode,<br>Namakkal district,<br>Pincode 637215.
+                    </p>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 col-12 footer-widget-item">
+            <div id="custom_html-4" class="widget_text widget widget_custom_html">
+              <div class="widget_text footer-item">
+                <h6 class="widget-title text-secondary">CONTACT</h6>
+                <div class="textwidget custom-html-widget">
+                  <p class="small">
+                    <span class="fa fa-envelope" aria-hidden="true"></span>  ,
+                     Principal@ksrct.ac.in
+                    <br>
+                    <span class="fa fa-phone-square" aria-hidden="true"></span>
+                   Tel phone: 04288-274741 to 274744
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 col-12 footer-widget-item">
+            <div id="custom_html-6" class="widget_text widget widget_custom_html">
+              <div class="widget_text footer-item">
+                <h6 class="widget-title text-secondary">OFFICE HOURS</h6>
+                <div class="textwidget custom-html-widget">
+                  <p class="small">
+                    Monday to Friday <br>
+                    9:00 AM to 5:30 PM
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-6 col-12 footer-widget-item">
+            <div id="custom_html-8" class="widget_text widget widget_custom_html">
+              <div class="widget_text footer-item">
+                <h6 class="widget-title text-secondary">SOCIAL LINKS</h6>
+                <div class="textwidget custom-html-widget"><a href="https://www.facebook.com/ksrct1994" target="_blank" rel="noopener noreferrer"> <i class="fa fa-facebook-square fa-2x" aria-hidden="true" style="color:#3b5998"></i>
+                  </a>
+                  <a href="https://twitter.com/ksrct1994" target="_blank" rel="noopener noreferrer">
+                    <i class="fa fa-2x fa-twitter-square" aria-hidden="true" style="color:#00acee"></i>
+                  </a>
+                     <a href="https://www.youtube.com/channel/UCs1f7Zd-QG0tsX-JHJYtF-g" target="_blank" rel="noopener noreferrer">
+                    <i class="fa fa-2x fa-youtube-square" aria-hidden="true" style="color:#c4302b "></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-footer " style="background-color:#808080;">
+    <div class="container">
+      <div class="desc-menu-wrap">
+       
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+</body></html>
